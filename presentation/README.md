@@ -1,4 +1,4 @@
-# Deep Learning presentation: an introduction to Deep learning
+# A short introduction to Deep learning in Python
 
 ![alt text](images/cc-logo.png "CC")
 
