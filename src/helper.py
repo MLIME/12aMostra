@@ -1,4 +1,4 @@
-#utils for downloading datasets
+# utils for downloading datasets
 import sys
 import os
 import time
@@ -6,7 +6,9 @@ import gzip
 import numpy as np
 import pickle
 
-#from Lasagne's MNIST.py
+# from Lasagne's MNIST.py
+
+
 def load_mnist_dataset():
     # We first define a download function, supporting both Python 2 and 3.
     if sys.version_info[0] == 2:
@@ -20,6 +22,7 @@ def load_mnist_dataset():
 
     # We then define functions for loading fashionMNIST images and labels.
     # For convenience, they also download the requested files if needed.
+
     def load_mnist_images(filename):
         if not os.path.exists(filename):
             download(filename)
@@ -52,7 +55,3 @@ def load_mnist_dataset():
     # We just return all the arrays in order, as expected in main().
     # (It doesn't matter how we do this as long as we can read them again.)
     return X_train, y_train, X_test, y_test
-
-
-
-
