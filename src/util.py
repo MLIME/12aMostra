@@ -3,19 +3,23 @@ import gzip
 import os
 import time
 import matplotlib.pyplot as plt
-import pickle
 import numpy as np
 from pandas_ml import ConfusionMatrix
 
-#from Lasagne's MNIST.py
+# from Lasagne's MNIST.py
+
+
 def load_mnist_dataset():
     # We first define a download function, supporting both Python 2 and 3.
+    car = "http://fashion-mnist.s3-website."
+    cdr = ".amazonaws.com/"
+    fashion_source = car + cdr
     if sys.version_info[0] == 2:
         from urllib import urlretrieve
     else:
         from urllib.request import urlretrieve
 
-    def download(filename, source='http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/'):
+    def download(filename, source=fashion_source):
         print("Downloading %s" % filename)
         urlretrieve(source + filename, filename)
 
@@ -60,6 +64,7 @@ def get_log_path():
     run_label = time.strftime('%d-%m-%Y_%H-%M-%S')  # e.g. 12-11-2016_18-20-45
     return os.path.join(log_basedir, run_label)
 
+
 def plot9images(images, cls_true, img_shape, cls_pred=None, lspace=0.3):
     """
     Function to show 9 images with their respective classes.
@@ -86,6 +91,7 @@ def plot9images(images, cls_true, img_shape, cls_pred=None, lspace=0.3):
 
     plt.tight_layout()
     plt.show()
+
 
 def plot15images(images, cls_true, img_shape, cls_pred=None):
     """
@@ -127,27 +133,74 @@ def plotconfusion(truth, predictions):
     _ = plt.show()
 
 
-#return fashionMNIST label names for an array 
-label_names = ["T-shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Boot"]
+# return fashionMNIST label names for an array
+label_names = ["T-shirt", "Trouser", "Pullover",
+               "Dress", "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Boot"]
+
+
 def get_label_names(pred):
     return [label_names[k] for k in pred]
 
 
-#missed é um array com True onde errou, n o numero de exemplos que queremos
-#devolve o índice dos exemplos
+# missed é um array com True onde errou, n o numero de exemplos que queremos
+# devolve o índice dos exemplos
 def select_missed_examples(missed, n):
-    #ind são os indices de 0 a size
+    # ind são os indices de 0 a size
     ind = np.arange(missed.size)
-    #ind são os indices com True
+    # ind são os indices com True
     ind = ind[missed]
     np.random.shuffle(ind)
     return ind[0:n]
+
 
 def plot_missed_examples(images, truth, missed, predicted=None):
     image_shape = (images.shape[1], images.shape[2])
     missing = select_missed_examples(missed, 9)
     if predicted is not None:
-        plot9images(images[missing], get_label_names(truth[missing]), image_shape, get_label_names(predicted[missing]), lspace=0.9)
+        plot9images(images[missing], get_label_names(truth[missing]),
+                    image_shape, get_label_names(predicted[missing]),
+                    lspace=0.9)
     else:
-        plot9images(images[missing], get_label_names(truth[missing]), image_shape)
-    
+        plot9images(images[missing], get_label_names(truth[missing]),
+                    image_shape)
+
+
+def r_squared(data, w, b):
+    """
+    Calculate the R^2 value
+
+    :type data: np array
+    :type w: float
+    :type b: float
+    :rtype: float
+    """
+    X, Y = data.T[0], data.T[1]
+    Y_hat = X * w + b
+    Y_mean = np.mean(Y)
+    sstot = np.sum(np.square(Y - Y_mean))
+    ssreg = np.sum(np.square(Y_hat - Y_mean))
+    return 1 - (ssreg/sstot)
+
+
+def plot_line(data, w, b, title, r_squared):
+    """
+    Plot the regression line
+
+    :type data: np array
+    :type w: float
+    :type b: float
+    :type title: str
+    :type r_squared: float
+    """
+    X, Y = data.T[0], data.T[1]
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.plot(X, Y, 'bo', label='Real data')
+    plt.plot(X, X * w + b, 'r', label='Predicted data')
+    plt.title(title)
+    bbox_props = dict(boxstyle="square,pad=0.3",
+                      fc="white", ec="black", lw=0.2)
+    t = ax.text(20, 135, "$R^2 ={:.4f}$".format(r_squared),
+                size=15, bbox=bbox_props)
+    plt.legend()
+    plt.show()
