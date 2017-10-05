@@ -8,14 +8,14 @@
 
 % input x and W
 \node[op] (w11) {$w_{11}$};
-\node[op, below=10pt of w11] (x1) {$x_{1}$};
+\node[placeholder, below=10pt of w11] (x1) {$x_{1}$};
 \node[op, below=20pt of x1] (w12) {$w_{12}$};
-\node[op, below=10pt of w12] (x2) {$x_{2}$};
+\node[placeholder, below=10pt of w12] (x2) {$x_{2}$};
 
 \node[op, below=20pt of x2] (w21) {$w_{21}$};
-\node[op, below=10pt of w21] (x11) {$x_{1}$};
+\node[placeholder, below=10pt of w21] (x11) {$x_{1}$};
 \node[op, below=20pt of x11] (w22) {$w_{22}$};
-\node[op, below=10pt of w22] (x22) {$x_{2}$};
+\node[placeholder, below=10pt of w22] (x22) {$x_{2}$};
 
 % multiplication
 \node[op, below right=1pt and 20pt of w11] (mult1) {$*$};
@@ -43,8 +43,8 @@
 \node[op, right=25pt of div2] (log2) {$\log$};
 \node[state, right=25pt of log1] (mult5) {$-0.207$};
 \node[state, right=25pt of log2] (mult6) {$0$};
-\node[op, above left=25pt and 10pt of mult5] (y1) {$y_1$};
-\node[op, below left=25pt and 10pt of mult6] (y2) {$y_2$};
+\node[placeholder, above left=25pt and 10pt of mult5] (y1) {$y_1$};
+\node[placeholder, below left=25pt and 10pt of mult6] (y2) {$y_2$};
 \node[op, below right=65pt and 15pt of mult5] (sum6) {$+$};
 \node[op, right=25pt of sum6] (minus1) {$*-1$};
 
