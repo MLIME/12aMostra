@@ -1,6 +1,6 @@
 BASE_NAME := main
 BUILD_DIR := build
-PDF_NAME := RNNpresentation.pdf
+PDF_NAME := PrimeirosPassosDL.pdf
 
 PDFLATEX_OPTIONS = -halt-on-error -aux-directory=$(BUILD_DIR) -output-directory=$(BUILD_DIR) --shell-escape
 LATEX     := latex
