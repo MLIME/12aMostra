@@ -1,0 +1,970 @@
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
+% all imports
+\input{all_imports}
+
+\AtBeginEnvironment{quote}{\singlespacing}
+
+% new commands
+\input{all_new_commands}
+
+% definitions
+\input{definitions/colors}
+\input{definitions/styles}
+
+\input{header}
+
+\begin{document}
+\nocite{DeepLearningbook}
+\nocite{xiao2017/online}
+\nocite{Dumoulin16}
+\maketitle
+
+\section{Introdução}
+\begin{frame}[fragile]{Por que Deep Learning?}
+\fontsize{12pt}{12}
+\begin{itemize}
+	\item \textbf{Engenharia de Features} (\alert{Feature Engineering}): como extrair informação relevante dos dados?
+    \vspace{2em}
+    \item \textbf{Representação de features}: como representar a informação para facilitar as tarefas?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Feature Engineering - Imagens}
+\input{TikzFiles/feature_engineering.tex}
+\end{frame}
+
+\begin{frame}[fragile]{Feature Engineering}
+\fontsize{12pt}{12}
+\begin{itemize}
+	\item Conhecimento especializado
+    \vspace{1em}
+	\item Geralmente não aplicável a diferentes domínios
+    \vspace{1em}
+    \item Difícil de avaliar
+    \vspace{1em}
+	\item "Humano, demasiado humano"
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Espaço de representação - Problemas}
+\begin{figure}
+	\centering
+		\includegraphics[height=0.35\textwidth]		{images/nonlinear_transform.png}
+    \caption{Transformação $\Phi$ possibilita classificação por classificador linear \cite{MostafaLD2012}}
+\end{figure}
+\begin{itemize}
+	\item Relação entre features: compor diferentes features matematicamente leva a informações úteis não aproveitadas
+    \item Transformações não-lineares: podem ajudar, mas como escolher?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Deep Learning}
+	\begin{exampleblock}{}
+   		"The solution is to allow computers to \alert{learn from experience} and understand the world in terms of a hierarchy of concepts, with each concept defined through its relation to simpler concepts. (...) This approach \alert{avoids the need for human operators to formally specify} all the knowledge that the computer needs. (...) If we draw a graph showing how these concepts are built on top of each other, the \alert{graph is deep}, with many layers. For this reason, we call this approach \alert{deep learning}."\\
+        
+I. Goodfellow, Y. Bengio, A. Courville -- \textbf{Deep Learning} (2017)
+    \end{exampleblock}
+\end{frame}
+
+\section{Representação gráfica}
+
+\begin{frame}[fragile]{Perceptron}
+\input{TikzFiles/perceptron}
+\end{frame}
+
+\begin{frame}[fragile]{Revisão: função sigmoide}
+\input{TikzFiles/Sigmoid}
+\end{frame}
+
+\begin{frame}[fragile]{ReLU: Rectified Linear Units}
+\input{TikzFiles/ReLU}
+\end{frame}
+
+\begin{frame}[fragile]{Revisão: função softmax}
+\input{TikzFiles/Softmax}
+\end{frame}
+
+\begin{frame}[fragile]{Rede neural: versão antiga}
+\input{TikzFiles/OldNN1}
+\end{frame}
+
+\begin{frame}[fragile]{Rede neural: versão antiga}
+\input{TikzFiles/OldNN2}
+\end{frame}
+
+\begin{frame}[fragile]{Rede neural: versão antiga}
+\begin{center}
+\input{TikzFiles/OldNN3}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Grafo de computação}
+\input{TikzFiles/Compgraph1}
+\end{frame}
+
+\begin{frame}[fragile]{Grafo de computação}
+\input{TikzFiles/Compgraph2}
+\end{frame}
+
+\begin{frame}[fragile]{Grafo no Tensorflow}
+\begin{minted}[linenos]{python}
+import tensorflow as tf
+import numpy as np
+
+input_shape = [10,1]
+input_to_hidden_shape = [4,10]
+hidden_to_output_shape = [2,4]
+
+W1init = np.zeros(input_to_hidden_shape,
+                  dtype="float32")
+W2init = np.zeros(hidden_to_output_shape,
+                  dtype="float32")
+\end{minted}
+\end{frame}
+
+
+\begin{frame}[fragile]{Grafo no Tensorflow}
+\begin{minted}[linenos]{python}
+graph = tf.Graph() 
+with graph.as_default():
+    x = tf.placeholder(shape=input_shape,
+                       dtype="float32") 
+    W1 = tf.get_variable(initializer=W1init)
+    v = tf.matmul(W1, x)
+    h = tf.sigmoid(v)
+    W2 = tf.get_variable(initializer=W2init)
+    z = tf.matmul(W2, h)
+    yhat = tf.nn.softmax(z)
+\end{minted}
+\end{frame}
+
+
+\begin{frame}[fragile]{Visualizando o grafo no Tensorboard}
+\begin{center}
+\includegraphics[scale=0.255]{images/basic_tf_graph.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Grafo de computação}
+\input{TikzFiles/Compgraph3}
+\end{frame}
+
+\begin{frame}[fragile]{Grafo de computação}
+\input{TikzFiles/Compgraph4}
+\end{frame}
+
+
+\begin{frame}[fragile]{Visualizando o grafo no Tensorboard}
+\begin{center}
+\includegraphics[scale=0.27]{images/abstract_tf_graph1.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Visualizando o grafo no Tensorboard}
+\begin{center}
+\includegraphics[scale=0.26]{images/abstract_tf_graph2.png}
+\end{center}
+\end{frame}
+
+
+\section{DFN - Deep Feedforward Networks}
+
+
+\begin{frame}{Deep Feedforward Networks}
+
+\alert{Deep Feedforward Networks} são também chamadas de \alert{feedforward neural networks}, \alert{multilayer perceptrons}, ou, em bom português, \alert{redes neurais}.\\
+
+
+Uma rede neural $\hat{\vect{y}} = f(\vect{x}; \vect{\theta})$ é um modelo parametrizado de aprendizado de máquina. Esse modelo pode ser descrito como uma composição de funções, por exemplo:
+
+\begin{equation*}
+f(\vect{x}; \vect{\theta}) = f^{(2)}(f^{(1)}(\vect{x}; \vect{\theta}); \vect{\theta})
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Rede neural}
+\input{TikzFiles/NN}
+\end{frame}
+
+\begin{frame}{Rede neural profunda}
+\input{TikzFiles/DeepNN}
+\end{frame}
+
+\begin{frame}{Redes neurais são aproximadores universais}
+\textbf{Teorema da aproximação universal} (universal approximation theorem): qualquer função Borel mensurável pode ser aproximada por uma rede neural com pelo menos uma camada escondida, dado que as camadas escondidas tenham um tamanho suficiente.\\
+
+Toda função definida num subconjunto fechado e limitado de $\mathbb{R}^{n}$ é Borel mensurável, então um grande número de funções são aproximáveis por uma rede neural.  
+\end{frame}
+
+\begin{frame}{Redes neurais são aproximadores universais}
+
+Uma rede neural com apenas uma camada escondida é suficiente para representar qualquer função. \\
+
+Mas essa única camada pode ser muito grande e apresentar problemas para generalização. \textbf{Empiricamente redes com profundidade maior apresentam melhores resultados para generalização}.
+\end{frame}
+
+
+
+\begin{frame}{Receita para aprendizado de máquina}
+\begin{itemize}
+\item Uma tarefa de aprendizado sobre algum dataset. \visible<2->{\alert{Fashion MNIST}}
+\vspace{0.3cm}
+\item Uma família de modelos. \visible<2->{\alert{DFN}}
+\vspace{0.3cm}
+\item Uma função de custo. \visible<2->{\alert{Entropia cruzada}}
+\vspace{0.3cm}
+\item Um algoritmo de otimização. \visible<2->{\alert{SGD}}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Fashion MNIST}
+\begin{center}
+\includegraphics[scale=0.185]{images/fashion-mnist-general.png}
+\end{center}
+\begin{itemize}
+\item Conjunto de treinamento: $60$k
+\item Conjunto de teste: $10$k
+\item Imagens: $28 \times 28$ tons de cinza.
+\item 10 classes: (camiseta, vestido, sandália, ...)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Fashion MNIST}
+\input{TikzFiles/fashionMNIST}
+\end{frame}
+
+\begin{frame}{Princípio da máxima verossimilhança}
+Vamos usar uma DFN para definir a distribuição $p(y| \vect{x};\vect{\theta})$. \\
+
+Os parâmetros $\vect{\theta}$ vão ser adaptados de modo que  $p(y| \vect{x};\vect{\theta})$ seja a distribuição mais adequada para os dados
+\begin{equation*}
+(\vect{x}^{(1)},y^{(1)}), \dots, (\vect{x}^{(N)},y^{(N)})
+\end{equation*}
+\end{frame}
+
+\begin{frame}{Classificação com uma rede neural}
+\input{TikzFiles/DFNclassification}
+\end{frame}
+
+\begin{frame}{Classificação com uma rede neural}
+A função que queremos maximizar é
+\Large{
+\begin{align*}
+\mathcal{L}(\vect{\theta}) &= \E_{\vect{x},y \sim p_{data}} \log p(y| \vect{x}; \vect{\theta})\\
+&= \frac{1}{N}\sum_{i=1}^{N}\log p(y^{(i)}| \vect{x}^{(i)}; \vect{\theta})\\
+\end{align*}
+}
+\end{frame}
+
+\begin{frame}{Revisão: entropia}
+\input{TikzFiles/Entropy1}
+\end{frame}
+
+\begin{frame}{Revisão: entropia}
+\input{TikzFiles/Entropy2}
+\end{frame}
+
+\begin{frame}{Revisão: divergência Kullback-Leibler}
+\input{TikzFiles/KullbackLeibler}
+\end{frame}
+
+\begin{frame}{Revisão: entropia cruzada}
+\Large{
+\begin{align*}
+CE(\vect{p},\vect{q}) &= H(\vect{p}) + D_{KL}(\vect{p}||\vect{q})\\
+\vspace{0.2cm}
+&= -\sum_{i}\vect{p}_{i}\log(\vect{q}_{i})
+\end{align*}
+}
+\vspace{0.2cm}
+\begin{equation*}
+\argmin_{\vect{q}} CE(\vect{p},\vect{q}) =  \argmin_{\vect{q}} D_{KL}(\vect{p},\vect{q})
+\end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]{Entropia cruzada e verossimilhança}
+\Large{
+\begin{align*}
+L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)}) &= CE(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})\\
+&= -\sum_{k=1}^{10} \vect{y}^{(i)}_{k}\log p(y=k| \vect{x}^{(i)}; \vect{\theta})\\
+&= - \log p(y^{(i)}| \vect{x}^{(i)}; \vect{\theta})\\
+\end{align*}
+}
+\end{frame}
+
+\begin{frame}{Entropia cruzada e verossimilhança}
+E a função que queremos minimizar é
+\Large{
+\begin{align*}
+J(\vect{\theta}) &= \frac{1}{N}\sum_{i=1}^{N} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})\\
+&= - \frac{1}{N}\sum_{i=1}^{N}\log p(y^{(i)}| \vect{x}^{(i)}; \vect{\theta})\\
+&= - \mathcal{L}(\vect{\theta})
+\end{align*}
+
+\vspace{0.2cm}
+\begin{equation*}
+\argmax_{\vect{\theta}} \mathcal{L}(\vect{\theta}) =  \argmin_{\vect{\theta}} J(\vect{\theta})
+\end{equation*}
+}
+\end{frame}
+
+
+
+\begin{frame}{Descida do gradiente}
+\Large{
+Seja $f:\mathbb{R}^{n} \rightarrow\mathbb{R}$. Chamamos de descida do gradiente (\alert{gradient descent}) o método para minimizar $f$. 
+
+\vspace{0.3cm}
+
+\begin{equation*}
+\vect{x}^{novo} = \vect{x}^{velho} - \alpha \grad{\vect{x}}{f(\vect{x})}
+\end{equation*}
+\vspace{0.3cm}
+\visible<2->{$\alpha$ é chamado de taxa de aprendizado (\alert{learning rate})}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]{Descida do gradiente}
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\linewidth]{images/Minimization_image.png}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]{Descida do gradiente}
+\Large{
+Na tarefa de aprendizado temos:
+
+\begin{equation*}
+J(\vect{\theta}) = \frac{1}{N}\sum_{i=1}^{N} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})
+\end{equation*}
+
+\begin{equation*}
+\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}
+\end{equation*}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Descida do gradiente estocástica}
+Na prática nunca lidamos com todos os dados pois $N$ pode ser muito grande (por exemplo, $60$k).\\
+
+Uma alternativa é o algoritmo de \textbf{descida do gradiente estocástica} (\alert{stochastic gradient descent}):
+
+\begin{itemize}
+\item Escolhemos uma observação arbitrária $(\vect{x}^{(i)},y^{(i)})$.
+\vspace{0.3cm}
+\item $J(\vect{\theta}) = L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})$
+\vspace{0.3cm}
+\item $\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Descida do gradiente em lote}
+Outra alternativa é o algoritmo de \textbf{descida do gradiente em lote} (\alert{mini-batch gradient descent}):
+
+\begin{itemize}
+\item Escolhemos um conjunto de $m$ ($m << N$) observações arbitrárias $(\vect{x}^{(1)},y^{(1)}), \dots, (\vect{x}^{(m)},y^{(m)})$.
+\vspace{0.3cm}
+\item $J(\vect{\theta}) =  \frac{1}{m}\sum_{i=1}^{m} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})$
+\vspace{0.3cm}
+\item $\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Dropout}
+\input{TikzFiles/Dropout1}
+\end{frame}
+
+\begin{frame}[fragile]{Dropout}
+\input{TikzFiles/Dropout2}
+\end{frame}
+
+\section{Back Propagation}
+
+\begin{frame}{Treinando um modelo}
+\Large{
+\begin{itemize}
+\item $\hat{\vect{y}} = f(\vect{x}; \theta)$ 
+\item $J(\vect{\theta}) =  \frac{1}{m}\sum_{i=1}^{m} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})$ 
+\item \textbf{SGD}:
+\begin{equation*}
+\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}
+\end{equation*}
+\vspace{0.3cm}
+\visible<2->{\item Retro propagação (back propagation) é um modo de computar $\grad{\vect{\theta}}{J(\vect{\theta})}$ usando aplicações recursivas da \alert{regra da cadeia}.}
+\end{itemize}
+}
+
+\end{frame}
+
+\begin{frame}{Operações simples: soma}
+\input{TikzFiles/soma}
+\end{frame}
+
+\begin{frame}{Operações simples: multiplicação}
+\input{TikzFiles/mult}
+\end{frame}
+
+\begin{frame}{Operações simples: divisão}
+\input{TikzFiles/div}
+\end{frame}
+
+\begin{frame}{Operações simples: negativo}
+\input{TikzFiles/minus1}
+\end{frame}
+
+\begin{frame}{Operações simples: exponenciação}
+\input{TikzFiles/exp}
+\end{frame}
+
+\begin{frame}{Operações simples: logarítimo}
+\input{TikzFiles/log}
+\end{frame}
+
+\begin{frame}{Regra da cadeia}
+\Large{
+\begin{itemize}
+\item $x \in \mathbb{R}$
+\item $f:\mathbb{R} \rightarrow\mathbb{R}$, $g:\mathbb{R} \rightarrow\mathbb{R}$. 
+\item $y = g(x)$
+\item $z = f(g(x)) = f(y)$
+\end{itemize}
+\[
+\frac{dz}{dx} = \frac{dz}{dy} \frac{dy}{dx} 
+\]
+}
+\end{frame}
+
+
+\begin{frame}{Aplicando a regra da cadeia}
+\input{TikzFiles/chain_rule_nodes}
+\end{frame}
+
+\begin{frame}{Regra da cadeia para várias variáveis}
+\Large{
+\begin{itemize}
+\item $f(x,y)$
+\item $x = f_{1}(a)$. 
+\item $y = f_{2}(a)$
+\end{itemize}
+\[
+\frac{\partial f}{ \partial a} = \frac{\partial f}{\partial x} \frac{\partial x}{\partial a} + \frac{\partial f}{\partial y} \frac{\partial y}{\partial a} 
+\]
+}
+\end{frame}
+
+
+\begin{frame}{Exemplo}
+\input{TikzFiles/multiple_paths}
+\end{frame}
+
+\begin{frame}{Exemplo: regressão logística}
+\Large{
+\begin{equation*}
+\hat{\vect{y}} = softmax(\vect{W}\vect{x} + \vect{b})
+\end{equation*}
+\begin{equation*}
+L(\vect{y},\hat{\vect{y}}) = CE(\vect{y},\hat{\vect{y}})
+\end{equation*}
+
+
+\begin{equation*}
+L(\vect{y},\hat{\vect{y}}) = - \sum_{i}\vect{y}_{i} \log \left(\frac{exp(\sum_{k} \vect{W}_{i,k}\vect{x}_{k} + \vect{b}_{i})}{\sum_{j}exp(\sum_{k}\vect{W}_{j,k}\vect{x}_{k} + \vect{b}_{j})} \right)
+\end{equation*}
+}
+\end{frame}
+
+\begin{frame}{Simplificação}
+\Large{
+\begin{itemize}
+\item $\begin{bmatrix}z_1\\z_2\end{bmatrix} = \begin{bmatrix}w_{11}  & w_{12}\\w_{21}  & w_{22}\end{bmatrix}* \begin{bmatrix}x_1\\x_2\end{bmatrix} + \begin{bmatrix}b_1\\b_2\end{bmatrix}$
+
+\vspace{0.4cm}
+
+\item $\begin{bmatrix}h_1\\h_2\end{bmatrix} = \begin{bmatrix}exp(z_1)\\exp(z_2)\end{bmatrix}$ 
+
+\vspace{0.4cm}
+
+\item $H = h_1 + h_2$ 
+
+\vspace{0.4cm}
+
+\item $\begin{bmatrix}\hat{y}_1\\\hat{y}_2\end{bmatrix} = \begin{bmatrix}\frac{h_1}{H}\\\frac{h_2}{H}\end{bmatrix}$ 
+\end{itemize}
+}
+\end{frame}
+
+
+
+\begin{frame}{Grafo de $L(\hat{\vect{y}}, \vect{y})$}
+\input{TikzFiles/expanded_graph_0}
+\end{frame}
+
+\begin{frame}{Caminho de $b_1$: 1}
+\input{TikzFiles/b1_path1}
+\end{frame}
+
+\begin{frame}{Caminho de $b_1$: 2}
+\input{TikzFiles/b1_path2}
+\end{frame}
+
+\begin{frame}{Caminho de $b_1$: 3}
+\input{TikzFiles/b1_path3}
+\end{frame}
+
+\begin{frame}{Derivada parcial de L com respeito a $b_1$: 1}
+\input{TikzFiles/b1_path1_grad}
+\end{frame}
+
+\begin{frame}{Derivada parcial de L com respeito a $b_1$: 2}
+\input{TikzFiles/b1_path2_grad}
+\end{frame}
+
+\begin{frame}{Derivada parcial de L com respeito a $b_1$: 3}
+\input{TikzFiles/b1_path3_grad}
+\end{frame}
+
+\begin{frame}{Derivada parcial de L com respeito a $b_1$}
+\Large{
+\begin{align*}
+\frac{\partial L}{\partial b_1} &= -y_1 + y_1\frac{h_1}{H} + y_2\frac{h_1}{H}\\
+\vspace{0.2cm}
+\visible<2->{&= y_1\left(\frac{h_1}{H} -1\right) + y_2\left(\frac{h_1}{H} -0\right)\\}
+\visible<3->{&= y_1\left(\hat{y}_1 -1\right) + y_2\left(\hat{y}_1 -0\right)\\}
+\visible<4->{&= \hat{y}_1 - y_1 \;\;\;\; \text{(quando} \;\; y \;\; \text{é um vetor one-hot)}}
+\end{align*}
+}
+\end{frame}
+
+\begin{frame}{Exemplo}
+\input{TikzFiles/examples_values}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_0}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_1}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_2}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_3}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_4}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_5}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_6}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_7}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_8}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_9}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_10}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_11}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_12}
+\end{frame}
+
+\begin{frame}{Forward}
+\input{TikzFiles/expanded_graph_13}
+\end{frame}
+
+\begin{frame}{Backward}
+\input{TikzFiles/expanded_graph_14}
+\end{frame}
+
+%O Overleaf não deixa eu criar mais files.+++++++++++++++++++++++++++++
+% A imagem do frame abaixo deve ser colocada
+% no arquivo "batch_example_values.tex"
+% e no lugar no frame deve haver apenas o
+% comando \input{TikzFiles/batch_example_values}
+
+\begin{frame}{Calculando em Lote}
+{\large\textbf{batch\_size = 3}
+}\begin{figure}[ht!]
+\centering
+
+\scalebox{1.3}{
+\begin{tikzpicture}[auto]
+
+% operations =============================
+
+% nodes
+\node[textonly] (x1) {$\begin{bmatrix}0.2\\0.7\end{bmatrix}$};
+\node[textonly, below=30pt of x1] (y1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
+\node[textonly, right=10pt of x1] (x2) {$\begin{bmatrix}0.8\\0.1\end{bmatrix}$};
+\node[textonly, below=30pt of x2] (y2) {$\begin{bmatrix}0\\1\end{bmatrix}$};
+\node[textonly, right=10pt of x2] (x3) {$\begin{bmatrix}0.3\\0.5\end{bmatrix}$};
+\node[textonly, below=30pt of x3] (y3) {$\begin{bmatrix}1\\0\end{bmatrix}$};
+
+
+\node[textonly, above=1pt of x1] (x1name) {$\vect{x}_1$};
+\node[textonly, above=1pt of y1] (y1name) {$\vect{y}_1$};
+\node[textonly, above=1pt of x2] (x2name) {$\vect{x}_2$};
+\node[textonly, above=1pt of y2] (y2name) {$\vect{y}_2$};
+\node[textonly, above=1pt of x3] (x3name) {$\vect{x}_3$};
+\node[textonly, above=1pt of y3] (y3name) {$\vect{y}_3$};
+
+
+\end{tikzpicture}
+} % scalebox
+\end{figure}
+
+\end{frame}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+%O Overleaf não deixa eu criar mais files.+++++++++++++++++++++++++++++
+% A imagem do frame abaixo deve ser colocada
+% no arquivo "batch_graph.tex"
+% e no lugar no frame deve haver apenas o
+% comando \input{TikzFiles/batch_graph}
+
+\begin{frame}{Calulando em lote}
+\begin{figure}[ht!]
+\centering
+
+\scalebox{0.8}{
+\begin{tikzpicture}[auto]
+
+% operations =============================
+
+\begin{scope}[xshift=0cm,yshift=0cm]
+            \begin{scope}[xshift=0cm,yshift=0cm]
+			\node[placeholder] (x1) at (1,3.5) {$\begin{bmatrix}0.3\\0.5\end{bmatrix}$};
+            \end{scope}
+            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
+			\node[placeholder] (x2)  at (1,3.5) {$\begin{bmatrix}0.8\\0.1\end{bmatrix}$};
+            \end{scope}
+            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
+			\node[placeholder] (x3)  at (1,3.5) {$\begin{bmatrix}0.2\\0.7\end{bmatrix}$};
+            \end{scope}  
+\end{scope}
+
+\begin{scope}[xshift=0cm,yshift=0cm]
+            \begin{scope}[xshift=0cm,yshift=0cm]
+			\node[placeholder] (y1) at (1,1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
+            \end{scope}
+            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
+			\node[placeholder] (y2)  at (1,1) {$\begin{bmatrix}0\\1\end{bmatrix}$};
+            \end{scope}
+            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
+			\node[placeholder] (y3)  at (1,1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
+            \end{scope}  
+\end{scope}
+
+\begin{scope}[xshift=0cm,yshift=0cm]
+            \begin{scope}[xshift=0cm,yshift=0cm]
+			\node[op] (df1) at (7,1)  {\large{L}};
+            \end{scope}
+            \begin{scope}[xshift=-0.4cm,yshift=-0.4cm]
+			\node[op] (df2)  at (7,1)  {\large{L}};
+            \end{scope}
+            \begin{scope}[xshift=-0.8cm,yshift=-0.8cm]
+			\node[op] (df3)  at (7,1)  {\large{L}};
+            \end{scope}  
+\end{scope}
+
+
+\begin{scope}[xshift=0cm,yshift=0cm]
+            \begin{scope}[xshift=0cm,yshift=0cm]
+			\node[gradient2] (grad1) at (12,1)  {$-0.26$};
+            \end{scope}
+            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
+			\node[gradient2] (grad2)  at (12,1)  {$0.54$};
+            \end{scope}
+            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
+			\node[gradient2] (grad3)  at (12,1)  {$-0.19$};
+            \end{scope}  
+\end{scope}
+
+
+\node[textonly, right=10pt of x2] (inv1) {};
+\node[textonly, right=10pt of y2] (inv2) {};
+\node[textonly, left=10pt of df2] (inv3) {};
+\node[textonly, right=10pt of df2] (inv4) {};
+\node[textonly, left=10pt of grad2] (inv5) {};
+
+%edges
+\path[tedge, orange!120, line width=1.5mm]  (inv1) -- (inv3);
+\path[tedge, orange!120, line width=1.5mm]  (inv2) -- (inv3);
+\path[tedge, green2!120, line width=1.5mm]  (inv4) -- (inv5);
+
+\end{tikzpicture}
+} % scalebox
+\end{figure}
+\end{frame}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\begin{frame}{Atualizando $b_1$}
+\Large{
+\begin{align*}
+{b_1}^{novo} &= {b_1}^{velho} - \alpha \frac{\partial L}{\partial b_1}\\
+&= 0 + \alpha 0.19\\
+\end{align*}
+}
+\end{frame}
+
+
+\section{CNN - Convolutional Neural Networks}
+
+\begin{frame}{Intuição}
+	\begin{center}
+	\includegraphics[width=0.24\textwidth]{images/trans_invariance0.png}
+    \hspace{0.12\textwidth}
+    \includegraphics[width=0.24\textwidth]{images/trans_invariance1.png}
+    \end{center}
+\begin{itemize}
+	\item Propriedade interessante de imagens: invariância translacional
+    \item Convolução: operador que passa um filtro/kernel/núcleo pequeno por uma imagem para gerar outra imagem
+    \item Multiplicação de matrizes está para DFN assim como Convolução está para CNN
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Aplicando filtros em uma imagem}
+\input{TikzFiles/Kernel_image_pro}
+\end{frame}
+
+
+\begin{frame}{Exemplo de imagem}
+\input{TikzFiles/5x5}
+\end{frame}
+
+\begin{frame}{Exemplo de filtro}
+\input{TikzFiles/3x3}
+\end{frame}
+
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_00.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_01.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_02.pdf}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_03.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_04.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_05.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_06.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_07.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convolução}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_08.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Feature map}
+\input{TikzFiles/feature_map}
+\end{frame}
+
+
+\begin{frame}{Feature map}
+Para calcular o tamanho do feature map nos usamos a equação:
+
+\begin{equation*}
+ o = (i - k) +1
+\end{equation*}
+
+
+Em que $o \times o$ é o tamanho do feature map, a imagem de entrada tem o tamanho $i \times i$, o tamanho do filtro é $k \times k$, andamos apenas um pixel por vez em cada eixo (\textbf{stride} $= 1$) e não usamos \textbf{padding}.
+\end{frame}
+
+\begin{frame}{Same Padding}
+\begin{center}
+\includegraphics[scale=1]{images/same_padding_no_strides_00.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Same Padding}
+\begin{center}
+\includegraphics[scale=1]{images/same_padding_no_strides_01.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Same Padding}
+\begin{center}
+\includegraphics[scale=1]{images/same_padding_no_strides_02.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Same Padding}
+\begin{center}
+\includegraphics[scale=1]{images/same_padding_no_strides_03.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Pooling}
+\begin{itemize}
+\item  Inserimos uma camada de \textbf{pooling} entre camadas de convolução.
+\vspace{0.3cm}
+\item  Fazemos isso para progressivamente diminuir o número de parâmetros.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_00.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_01.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_02.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_03.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_04.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_05.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_06.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_07.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Max Pooling}
+\begin{center}
+\includegraphics[scale=1.5]{images/numerical_max_pooling_08.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Arquitetura de CNN}
+\begin{center}
+\input{TikzFiles/convnet_arch}
+\end{center}
+\begin{itemize}
+	\item Layers Convolucionais: filtros aprendíveis
+    \vspace{1em}
+    \item Pooling: reduz a dimensão da imagem
+    \vspace{1em}
+    \item Ativação: igual à DFN
+    \vspace{1em}
+    \item Fully-Connected: DFN 
+\end{itemize}
+\end{frame}
+
+\section{Parte Prática}
+
+\begin{frame}{Tutorial}
+Preparamos tutorias básicos em \textbf{Tensorflow} e \textbf{Keras}:
+\vspace{0.3cm}
+\begin{center}
+\url{https://github.com/MLIME/Semana-Estatistica-17}
+\end{center}
+
+\vspace{0.3cm}
+
+\alert{Esses slides também estão lá.}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliography{my_references}
+  \bibliographystyle{abbrv}
+
+\end{frame}
+
+\end{document}
