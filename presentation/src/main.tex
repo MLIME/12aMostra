@@ -191,7 +191,7 @@ f(\vect{x}; \vect{\theta}) = f^{(2)}(f^{(1)}(\vect{x}; \vect{\theta}); \vect{\th
 \end{frame}
 
 \begin{frame}{Redes neurais são aproximadores universais}
-\textbf{Teorema da aproximação universal} (universal approximation theorem): qualquer função Borel mensurável pode ser aproximada por uma rede neural com pelo menos uma camada escondida, dado que as camadas escondidas tenham um tamanho suficiente.\\
+\textbf{Teorema da aproximação universal} (\alert{universal approximation theorem}): qualquer função Borel mensurável pode ser aproximada por uma rede neural com pelo menos uma camada escondida, dado que as camadas escondidas tenham um tamanho suficiente.\\
 
 Toda função definida num subconjunto fechado e limitado de $\mathbb{R}^{n}$ é Borel mensurável, então um grande número de funções são aproximáveis por uma rede neural.  
 \end{frame}
@@ -365,15 +365,23 @@ Uma alternativa é o algoritmo de \textbf{descida do gradiente estocástica} (\a
 \end{frame}
 
 \begin{frame}[fragile]{Descida do gradiente em lote}
-Outra alternativa é o algoritmo de \textbf{descida do gradiente em lote} (\alert{mini-batch gradient descent}):
+Uma variação desse algoritmo é conhecido como \textbf{descida do gradiente em lote} (\alert{mini-batch gradient descent}):
 
 \begin{itemize}
-\item Escolhemos um conjunto de $m$ ($m << N$) observações arbitrárias $(\vect{x}^{(1)},y^{(1)}), \dots, (\vect{x}^{(m)},y^{(m)})$.
+\item Escolhemos um conjunto de $m$ ($m \ll N$) observações arbitrárias $(\vect{x}^{(1)},y^{(1)}), \dots, (\vect{x}^{(m)},y^{(m)})$.
 \vspace{0.3cm}
 \item $J(\vect{\theta}) =  \frac{1}{m}\sum_{i=1}^{m} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})$
 \vspace{0.3cm}
 \item $\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}$
 \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Regularização}
+
+
+**Placeholder**
+
+
 \end{frame}
 
 \begin{frame}[fragile]{Dropout}
@@ -389,7 +397,7 @@ Outra alternativa é o algoritmo de \textbf{descida do gradiente em lote} (\aler
 \begin{frame}{Treinando um modelo}
 \Large{
 \begin{itemize}
-\item $\hat{\vect{y}} = f(\vect{x}; \theta)$ 
+\item $\hat{\vect{y}} = f(\vect{x}; \vect{\theta})$ 
 \item $J(\vect{\theta}) =  \frac{1}{m}\sum_{i=1}^{m} L(\vect{y}^{(i)}, {\hat{\vect{y}}}^{(i)})$ 
 \item \textbf{SGD}:
 \begin{equation*}
@@ -429,7 +437,6 @@ Outra alternativa é o algoritmo de \textbf{descida do gradiente em lote} (\aler
 \begin{frame}{Regra da cadeia}
 \Large{
 \begin{itemize}
-\item $x \in \mathbb{R}$
 \item $f:\mathbb{R} \rightarrow\mathbb{R}$, $g:\mathbb{R} \rightarrow\mathbb{R}$. 
 \item $y = g(x)$
 \item $z = f(g(x)) = f(y)$
@@ -448,12 +455,12 @@ Outra alternativa é o algoritmo de \textbf{descida do gradiente em lote} (\aler
 \begin{frame}{Regra da cadeia para várias variáveis}
 \Large{
 \begin{itemize}
-\item $f(x,y)$
+\item $z = f(x,y)$
 \item $x = f_{1}(a)$. 
 \item $y = f_{2}(a)$
 \end{itemize}
 \[
-\frac{\partial f}{ \partial a} = \frac{\partial f}{\partial x} \frac{\partial x}{\partial a} + \frac{\partial f}{\partial y} \frac{\partial y}{\partial a} 
+\frac{\partial z}{ \partial a} = \frac{\partial z}{\partial x} \frac{\partial x}{\partial a} + \frac{\partial z}{\partial y} \frac{\partial y}{\partial a} 
 \]
 }
 \end{frame}
@@ -605,136 +612,22 @@ L(\vect{y},\hat{\vect{y}}) = - \sum_{i}\vect{y}_{i} \log \left(\frac{exp(\sum_{k
 \input{TikzFiles/expanded_graph_14}
 \end{frame}
 
-%O Overleaf não deixa eu criar mais files.+++++++++++++++++++++++++++++
-% A imagem do frame abaixo deve ser colocada
-% no arquivo "batch_example_values.tex"
-% e no lugar no frame deve haver apenas o
-% comando \input{TikzFiles/batch_example_values}
-
 \begin{frame}{Calculando em Lote}
-{\large\textbf{batch\_size = 3}
-}\begin{figure}[ht!]
-\centering
-
-\scalebox{1.3}{
-\begin{tikzpicture}[auto]
-
-% operations =============================
-
-% nodes
-\node[textonly] (x1) {$\begin{bmatrix}0.2\\0.7\end{bmatrix}$};
-\node[textonly, below=30pt of x1] (y1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
-\node[textonly, right=10pt of x1] (x2) {$\begin{bmatrix}0.8\\0.1\end{bmatrix}$};
-\node[textonly, below=30pt of x2] (y2) {$\begin{bmatrix}0\\1\end{bmatrix}$};
-\node[textonly, right=10pt of x2] (x3) {$\begin{bmatrix}0.3\\0.5\end{bmatrix}$};
-\node[textonly, below=30pt of x3] (y3) {$\begin{bmatrix}1\\0\end{bmatrix}$};
-
-
-\node[textonly, above=1pt of x1] (x1name) {$\vect{x}_1$};
-\node[textonly, above=1pt of y1] (y1name) {$\vect{y}_1$};
-\node[textonly, above=1pt of x2] (x2name) {$\vect{x}_2$};
-\node[textonly, above=1pt of y2] (y2name) {$\vect{y}_2$};
-\node[textonly, above=1pt of x3] (x3name) {$\vect{x}_3$};
-\node[textonly, above=1pt of y3] (y3name) {$\vect{y}_3$};
-
-
-\end{tikzpicture}
-} % scalebox
-\end{figure}
-
+\input{TikzFiles/batch_example_values}
 \end{frame}
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-%O Overleaf não deixa eu criar mais files.+++++++++++++++++++++++++++++
-% A imagem do frame abaixo deve ser colocada
-% no arquivo "batch_graph.tex"
-% e no lugar no frame deve haver apenas o
-% comando \input{TikzFiles/batch_graph}
 
 \begin{frame}{Calulando em lote}
-\begin{figure}[ht!]
-\centering
-
-\scalebox{0.8}{
-\begin{tikzpicture}[auto]
-
-% operations =============================
-
-\begin{scope}[xshift=0cm,yshift=0cm]
-            \begin{scope}[xshift=0cm,yshift=0cm]
-			\node[placeholder] (x1) at (1,3.5) {$\begin{bmatrix}0.3\\0.5\end{bmatrix}$};
-            \end{scope}
-            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
-			\node[placeholder] (x2)  at (1,3.5) {$\begin{bmatrix}0.8\\0.1\end{bmatrix}$};
-            \end{scope}
-            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
-			\node[placeholder] (x3)  at (1,3.5) {$\begin{bmatrix}0.2\\0.7\end{bmatrix}$};
-            \end{scope}  
-\end{scope}
-
-\begin{scope}[xshift=0cm,yshift=0cm]
-            \begin{scope}[xshift=0cm,yshift=0cm]
-			\node[placeholder] (y1) at (1,1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
-            \end{scope}
-            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
-			\node[placeholder] (y2)  at (1,1) {$\begin{bmatrix}0\\1\end{bmatrix}$};
-            \end{scope}
-            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
-			\node[placeholder] (y3)  at (1,1) {$\begin{bmatrix}1\\0\end{bmatrix}$};
-            \end{scope}  
-\end{scope}
-
-\begin{scope}[xshift=0cm,yshift=0cm]
-            \begin{scope}[xshift=0cm,yshift=0cm]
-			\node[op] (df1) at (7,1)  {\large{L}};
-            \end{scope}
-            \begin{scope}[xshift=-0.4cm,yshift=-0.4cm]
-			\node[op] (df2)  at (7,1)  {\large{L}};
-            \end{scope}
-            \begin{scope}[xshift=-0.8cm,yshift=-0.8cm]
-			\node[op] (df3)  at (7,1)  {\large{L}};
-            \end{scope}  
-\end{scope}
-
-
-\begin{scope}[xshift=0cm,yshift=0cm]
-            \begin{scope}[xshift=0cm,yshift=0cm]
-			\node[gradient2] (grad1) at (12,1)  {$-0.26$};
-            \end{scope}
-            \begin{scope}[xshift=-0.6cm,yshift=-0.6cm]
-			\node[gradient2] (grad2)  at (12,1)  {$0.54$};
-            \end{scope}
-            \begin{scope}[xshift=-1.2cm,yshift=-1.2cm]
-			\node[gradient2] (grad3)  at (12,1)  {$-0.19$};
-            \end{scope}  
-\end{scope}
-
-
-\node[textonly, right=10pt of x2] (inv1) {};
-\node[textonly, right=10pt of y2] (inv2) {};
-\node[textonly, left=10pt of df2] (inv3) {};
-\node[textonly, right=10pt of df2] (inv4) {};
-\node[textonly, left=10pt of grad2] (inv5) {};
-
-%edges
-\path[tedge, orange!120, line width=1.5mm]  (inv1) -- (inv3);
-\path[tedge, orange!120, line width=1.5mm]  (inv2) -- (inv3);
-\path[tedge, green2!120, line width=1.5mm]  (inv4) -- (inv5);
-
-\end{tikzpicture}
-} % scalebox
-\end{figure}
+\input{TikzFiles/batch_graph}
 \end{frame}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 \begin{frame}{Atualizando $b_1$}
 \Large{
 \begin{align*}
-{b_1}^{novo} &= {b_1}^{velho} - \alpha \frac{\partial L}{\partial b_1}\\
-&= 0 + \alpha 0.19\\
+{b_1}^{novo} &= {b_1}^{velho} - \alpha \frac{\partial J}{\partial b_1}\\
+\visible<2->{&= 0 - \alpha \frac{1}{3}\left(-0.19 + 0.54 -0.26\right)\\}
+\visible<3->{&= 0 - \alpha 0.03\\}
+\visible<4->{&= - 0.003 \;\;\;\; (\alpha = 0.1)}
 \end{align*}
 }
 \end{frame}
@@ -951,7 +844,7 @@ Em que $o \times o$ é o tamanho do feature map, a imagem de entrada tem o taman
 Preparamos tutorias básicos em \textbf{Tensorflow} e \textbf{Keras}:
 \vspace{0.3cm}
 \begin{center}
-\url{https://github.com/MLIME/Semana-Estatistica-17}
+\url{https://github.com/MLIME/12aMostra}
 \end{center}
 
 \vspace{0.3cm}
