@@ -374,14 +374,20 @@ Uma variação desse algoritmo é conhecido como \textbf{descida do gradiente em
 \vspace{0.3cm}
 \item $\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}$
 \end{itemize}
+Quando se processa todos (ou um número equivalente de) exemplos se diz que se passou uma \textbf{época}
 \end{frame}
 
 \begin{frame}[fragile]{Regularização}
-
-
-**Placeholder**
-
-
+Estratégias para impor navalha de Occam. Melhoram a performance no teste às custas de uma piora no treino.
+\vspace{0.3cm}
+\begin{itemize}
+	\item Penalizações à Norma do Parâmetro ($L_2, L_1$)\\
+    \vspace{0.3cm}
+    \item Early Stopping
+    \vspace{0.3cm}
+    \item Dropout
+    
+\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Dropout}
