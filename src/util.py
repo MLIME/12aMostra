@@ -11,9 +11,7 @@ from pandas_ml import ConfusionMatrix
 
 def load_mnist_dataset():
     # We first define a download function, supporting both Python 2 and 3.
-    car = "http://fashion-mnist.s3-website."
-    cdr = ".amazonaws.com/"
-    fashion_source = car + cdr
+    fashion_source = "http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/"
     if sys.version_info[0] == 2:
         from urllib import urlretrieve
     else:
