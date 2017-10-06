@@ -17,7 +17,6 @@
 \begin{document}
 \nocite{DeepLearningbook}
 \nocite{xiao2017/online}
-\nocite{Dumoulin16}
 \maketitle
 
 \section{Introdução}
@@ -92,11 +91,11 @@ I. Goodfellow, Y. Bengio, A. Courville -- \textbf{Deep Learning} (2017)
 \input{TikzFiles/OldNN2}
 \end{frame}
 
-\begin{frame}[fragile]{Rede neural: versão antiga}
-\begin{center}
-\input{TikzFiles/OldNN3}
-\end{center}
-\end{frame}
+%\begin{frame}[fragile]{Rede neural: versão antiga}
+%\begin{center}
+%\input{TikzFiles/OldNN3}
+%\end{center}
+%\end{frame}
 
 \begin{frame}[fragile]{Grafo de computação}
 \input{TikzFiles/Compgraph1}
@@ -321,7 +320,7 @@ Seja $f:\mathbb{R}^{n} \rightarrow\mathbb{R}$. Chamamos de descida do gradiente 
 \vect{x}^{novo} = \vect{x}^{velho} - \alpha \grad{\vect{x}}{f(\vect{x})}
 \end{equation*}
 \vspace{0.3cm}
-\visible<2->{$\alpha$ é chamado de taxa de aprendizado (\alert{learning rate})}
+\visible<2->{$\alpha$ é chamado de taxa de aprendizado (\alert{learning rate})}.
 }
 \end{frame}
 
@@ -374,11 +373,11 @@ Uma variação desse algoritmo é conhecido como \textbf{descida do gradiente em
 \vspace{0.3cm}
 \item $\vect{\theta}^{novo} = \vect{\theta}^{velho} - \alpha \grad{\vect{\theta}}{J(\vect{\theta})}$
 \end{itemize}
-Quando se processa todos (ou um número equivalente de) exemplos se diz que se passou uma \textbf{época} (\alert{epoch})
+Quando se processa todos (ou um número equivalente de) exemplos se diz que se passou uma \textbf{época} (\alert{epoch}).
 \end{frame}
 
 \begin{frame}[fragile]{Regularização}
-Estratégias para impor navalha de Occam. Melhoram a performance no teste às custas de uma piora no treino.
+Estratégias para impor a navalha de Occam. Elas melhoram a performance no teste às custas de uma piora no treino.
 \vspace{0.3cm}
 \begin{itemize}
 	\item Penalizações à Norma do Parâmetro ($L_2, L_1$)\\
@@ -660,28 +659,28 @@ L(\vect{y},\hat{\vect{y}}) = - \sum_{i}\vect{y}_{i} \log \left(\frac{exp(\sum_{k
 \end{frame}
 
 
-\begin{frame}{Exemplo de imagem}
+\begin{frame}{Exemplo de imagem (retirado de \cite{{Dumoulin16}})}
 \input{TikzFiles/5x5}
 \end{frame}
 
-\begin{frame}{Exemplo de filtro}
+\begin{frame}{Exemplo de filtro (retirado de \cite{{Dumoulin16}})}
 \input{TikzFiles/3x3}
 \end{frame}
 
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_00.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_01.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_02.pdf}
 \end{center}
@@ -689,44 +688,44 @@ L(\vect{y},\hat{\vect{y}}) = - \sum_{i}\vect{y}_{i} \log \left(\frac{exp(\sum_{k
 
 
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_03.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_04.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_05.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_06.pdf}
 \end{center}
 \end{frame}
 
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_07.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Convolução}
+\begin{frame}{Convolução (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_no_padding_no_strides_08.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Feature map}
+\begin{frame}{Feature map (retirado de \cite{{Dumoulin16}})}
 \input{TikzFiles/feature_map}
 \end{frame}
 
@@ -742,25 +741,25 @@ Para calcular o tamanho do feature map nos usamos a equação:
 Em que $o \times o$ é o tamanho do feature map, a imagem de entrada tem o tamanho $i \times i$, o tamanho do filtro é $k \times k$, andamos apenas um pixel por vez em cada eixo (\textbf{stride} $= 1$) e não usamos \textbf{padding}.
 \end{frame}
 
-\begin{frame}{Same Padding}
+\begin{frame}{Same Padding (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1]{images/same_padding_no_strides_00.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Same Padding}
+\begin{frame}{Same Padding (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1]{images/same_padding_no_strides_01.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Same Padding}
+\begin{frame}{Same Padding (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1]{images/same_padding_no_strides_02.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Same Padding}
+\begin{frame}{Same Padding (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1]{images/same_padding_no_strides_03.pdf}
 \end{center}
@@ -775,55 +774,55 @@ Em que $o \times o$ é o tamanho do feature map, a imagem de entrada tem o taman
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_00.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_01.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_02.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_03.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_04.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_05.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_06.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_07.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Max Pooling}
+\begin{frame}{Max Pooling (retirado de \cite{{Dumoulin16}})}
 \begin{center}
 \includegraphics[scale=1.5]{images/numerical_max_pooling_08.pdf}
 \end{center}
@@ -847,7 +846,7 @@ Em que $o \times o$ é o tamanho do feature map, a imagem de entrada tem o taman
 \section{Parte Prática}
 
 \begin{frame}{Tutorial}
-Preparamos tutorias básicos em \textbf{Tensorflow} e \textbf{Keras}:
+Preparamos tutoriais básicos em \textbf{Tensorflow} e \textbf{Keras}:
 \vspace{0.3cm}
 \begin{center}
 \url{https://github.com/MLIME/12aMostra}
