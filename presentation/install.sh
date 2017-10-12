@@ -1,4 +1,4 @@
-sudo apt-get install texlive-latex-base -y
-sudo apt-get install latex-beamer -y
-sudo apt-get install texlive-latex-extra -y
-sudo apt-get install texlive-fonts-extra -y
+sudo apt-get install texlive-latex-base
+sudo apt-get install latex-beamer
+sudo apt-get install texlive-latex-extra
+sudo apt-get install texlive-fonts-extra
